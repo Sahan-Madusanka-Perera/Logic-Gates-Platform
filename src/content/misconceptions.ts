@@ -1,0 +1,205 @@
+import type { ModuleId, ObjectiveId } from './curriculum';
+
+/**
+ * Common mistakes. Text uses the app's inline markup: [[A'.B]] renders an
+ * expression with real overbars, **bold** is bold.
+ */
+export interface Misconception {
+  id: string;
+  title: string;
+  /** How the mistake shows up in answers — used to explain recommendations. */
+  signal: string;
+  objective: ObjectiveId;
+  lesson: ModuleId;
+  wrong: string;
+  plausible: string;
+  problem: string;
+  correct: string;
+  /** Question ids (from the question bank) that practise the correction. */
+  exercises: string[];
+}
+
+export const MISCONCEPTIONS: Misconception[] = [
+  {
+    id: 'and-or-swap',
+    title: 'Swapping AND and OR',
+    signal: 'an AND answer where OR was needed, or the reverse.',
+    objective: 'G2',
+    lesson: 'basic-gates',
+    wrong: '"[[A.B]] is 1 when A **or** B is 1."',
+    plausible: 'In everyday speech "and" and "or" are used loosely, and both gates have two inputs and the same rounded look.',
+    problem: 'AND needs **every** input to be 1. One 1 is not enough — a single 0 forces the output to 0.',
+    correct: 'AND: output 1 only when all inputs are 1. OR: output 0 only when all inputs are 0. Check the "all" condition first.',
+    exercises: ['g-and-1', 'g-or-2', 'mc-and-or-1'],
+  },
+  {
+    id: 'not-forgotten',
+    title: 'Ignoring the bubble (NOT)',
+    signal: 'answers that would be right for AND/OR/XOR but the gate had an inverting bubble.',
+    objective: 'G5',
+    lesson: 'combinational-gates',
+    wrong: '"A NAND gate with inputs 1 and 1 gives 1, because 1 AND 1 is 1."',
+    plausible: 'The NAND symbol is the AND shape — the small circle at the output is easy to overlook.',
+    problem: 'The bubble is a NOT gate. NAND first works out AND, then inverts it.',
+    correct: 'For any gate with a bubble, find the result without the bubble, then flip it: 1 AND 1 = 1, so NAND gives 0.',
+    exercises: ['g-nand-1', 'g-nor-1', 'mc-bubble-1'],
+  },
+  {
+    id: 'demorgan-bar-split',
+    title: 'Breaking a bar without changing the sign',
+    signal: 'answers like [[A\'.B\']] for [[(A.B)\']], keeping the dot.',
+    objective: 'B4',
+    lesson: 'boolean-laws',
+    wrong: '"[[(A.B)\']] = [[A\'.B\']] — just put a bar on each letter."',
+    plausible: 'It looks like "distributing" the bar, the way a number multiplies into brackets.',
+    problem: 'When you break a bar (De Morgan\'s law) the operator underneath must change too: dot becomes plus, plus becomes dot.',
+    correct: '[[(A.B)\']] = [[A\' + B\']] and [[(A + B)\']] = [[A\'.B\']]. Remember: "break the line, change the sign".',
+    exercises: ['law-dm-1', 'law-dm-2', 'mc-demorgan-1'],
+  },
+  {
+    id: 'xor-as-or',
+    title: 'Treating XOR like OR',
+    signal: 'saying XOR gives 1 when both inputs are 1.',
+    objective: 'G7',
+    lesson: 'combinational-gates',
+    wrong: '"[[A ⊕ B]] with A = 1, B = 1 gives 1, because at least one input is 1."',
+    plausible: 'XOR and OR agree on three of the four rows, and their symbols differ by one curved line.',
+    problem: 'XOR is "exclusive": it is 1 when the inputs are **different**. When both are 1 they are the same, so XOR gives 0.',
+    correct: 'For two inputs: XOR = 1 when exactly one input is 1. Compare the last row: OR(1,1) = 1, XOR(1,1) = 0.',
+    exercises: ['g-xor-1', 'g-xor-2', 'mc-xor-1'],
+  },
+  {
+    id: 'xor3-exactly-one',
+    title: 'Using "exactly one" for a 3-input XOR',
+    signal: 'saying a 3-input XOR gives 0 when all three inputs are 1.',
+    objective: 'G7',
+    lesson: 'combinational-gates',
+    wrong: '"A 3-input XOR is 1 only when exactly one input is 1, so XOR(1, 1, 1) = 0."',
+    plausible: 'The 2-input rule "only one input is 1" is usually taught first and seems general.',
+    problem: 'The notes define XOR by **odd** parity. With three 1s the count is odd, so the output is 1.',
+    correct: 'Count the 1s. Odd → XOR gives 1. Even (including zero) → XOR gives 0. The odd rule also works for two inputs; the "only one" rule does not work for three.',
+    exercises: ['g-xor3-1', 'g-xor3-2'],
+  },
+  {
+    id: 'skip-intermediate',
+    title: 'Jumping to the output',
+    signal: 'wrong outputs in multi-gate circuits where each single gate was answered correctly.',
+    objective: 'C4',
+    lesson: 'reading-circuits',
+    wrong: 'Looking at the last gate and guessing from the input letters, without working out the gates before it.',
+    plausible: 'Small circuits feel obvious, and writing intermediate values takes time.',
+    problem: 'The last gate\'s inputs are not A, B, C — they are the **outputs of earlier gates**. Skipping them is the most common cause of lost marks in circuit questions.',
+    correct: 'Work left to right. Write the output of every gate (label them X, Y, … or add a column to the truth table), then use those values for the next gate.',
+    exercises: ['c-out-2', 'c-int-1', 'c-int-2'],
+  },
+  {
+    id: 'missing-rows',
+    title: 'Missing or mis-ordered truth-table rows',
+    signal: 'truth tables with the wrong number of rows or rows out of counting order.',
+    objective: 'F4',
+    lesson: 'foundations',
+    wrong: '"Three inputs need 6 rows (3 × 2)." Or listing combinations in a random order.',
+    plausible: 'Each input has 2 values, so multiplying by the number of inputs seems natural.',
+    problem: 'Each new input **doubles** the number of combinations: 2 × 2 × 2 = 2³ = 8, not 3 × 2. A random order makes it easy to miss or repeat a row.',
+    correct: 'Use 2ⁿ rows and count in binary from 000 upwards. The first input column is half 0s then half 1s; the last column alternates 0, 1, 0, 1.',
+    exercises: ['f-comb-1', 'f-comb-2', 'f-order-1'],
+  },
+  {
+    id: 'bar-over-group',
+    title: 'One long bar vs separate bars',
+    signal: 'treating [[(A + B)\']] as [[A\' + B\']], or the reverse.',
+    objective: 'C2',
+    lesson: 'reading-circuits',
+    wrong: '"A bar over A + B is the same as a bar over A plus a bar over B."',
+    plausible: 'The bars cover the same letters, so they look similar on the page.',
+    problem: 'A long bar inverts the **result** of everything under it (one NOT after the OR = NOR). Separate bars invert each input **before** the OR. They give different truth tables.',
+    correct: '[[(A + B)\']] is NOR — 1 only for A = B = 0. [[A\' + B\']] is NAND — 0 only for A = B = 1. Draw the gates to see the difference.',
+    exercises: ['c-expr-1', 'mc-bar-1'],
+  },
+  {
+    id: 'precedence',
+    title: 'Doing OR before AND',
+    signal: 'evaluating [[A + B.C]] as [[(A + B).C]].',
+    objective: 'C1',
+    lesson: 'reading-circuits',
+    wrong: '"[[A + B.C]] means (A + B) first, then AND with C, reading left to right."',
+    plausible: 'We read left to right, so it feels natural to work in that order.',
+    problem: 'Like × before + in arithmetic, AND (dot) is done before OR (plus). Brackets and bars come first of all.',
+    correct: 'Order: brackets and bars → NOT → AND → OR. So [[A + B.C]] means A + (B.C). With A = 1, B = 0, C = 0: B.C = 0, then 1 + 0 = 1 (reading left to right would wrongly give 0).',
+    exercises: ['c-prec-1', 'mc-prec-1'],
+  },
+  {
+    id: 'arithmetic-plus',
+    title: 'Reading + as arithmetic addition',
+    signal: 'answers of 2 (or 10) for 1 + 1 in a Boolean expression.',
+    objective: 'F5',
+    lesson: 'foundations',
+    wrong: '"In Boolean algebra 1 + 1 = 2."',
+    plausible: 'The + symbol means addition everywhere else in maths.',
+    problem: 'In Boolean algebra "+" means OR. There are only two values, 0 and 1, so no result can be 2.',
+    correct: '1 + 1 = 1 (1 OR 1). Binary *addition*, where 1 + 1 = 10, is a different operation — it is what an adder circuit does with a sum and a carry.',
+    exercises: ['f-plus-1'],
+  },
+  {
+    id: 'minterm-polarity',
+    title: 'Getting minterm and maxterm bars the wrong way round',
+    signal: 'minterms with a bar on variables that are 1, or maxterms with no bar on variables that are 1.',
+    objective: 'P1',
+    lesson: 'sop-pos',
+    wrong: 'For row A = 0, B = 1: writing the minterm as [[A.B\']] or the maxterm as [[A\' + B]].',
+    plausible: 'Both forms use the same letters; only the bars move, so it is easy to mix the rules up.',
+    problem: 'A minterm must equal 1 on its row: a variable that is 0 needs a bar. A maxterm must equal 0 on its row: a variable that is 1 needs a bar.',
+    correct: 'Row A = 0, B = 1 → minterm [[A\'.B]] (= 1 only on this row), maxterm [[A + B\']] (= 0 only on this row). Check by substituting the row.',
+    exercises: ['p-min-1', 'p-max-1'],
+  },
+  {
+    id: 'icn-vs-index',
+    title: 'Mixing up ICN and minterm numbers',
+    signal: 'using the ICN (starting at 1) as the minterm index (starting at 0).',
+    objective: 'P1',
+    lesson: 'sop-pos',
+    wrong: '"Row ICN 4 (A = 0, B = 1, C = 1) is minterm m4."',
+    plausible: 'Both are row numbers in the same table.',
+    problem: 'The notes number rows with ICN from 1, but minterms are named by the **decimal value** of the inputs, which starts at 0. 011 is 3, so it is m3.',
+    correct: 'Minterm number = ICN − 1 = the binary input read as a decimal number.',
+    exercises: ['p-idx-1'],
+  },
+  {
+    id: 'kmap-binary-order',
+    title: 'K-map in binary order instead of Gray code',
+    signal: 'K-map columns labelled 00, 01, 10, 11.',
+    objective: 'K1',
+    lesson: 'karnaugh-maps',
+    wrong: 'Labelling K-map columns 00, 01, 10, 11, like a truth table.',
+    plausible: 'That is the order used everywhere else, including truth tables.',
+    problem: 'From 01 to 10 two bits change. Neighbouring K-map cells must differ in exactly one variable, otherwise groups give wrong terms.',
+    correct: 'Use Gray code: 00, 01, 11, 10. Each step changes one bit, and the last column is also next to the first (wrap-around).',
+    exercises: ['k-gray-1', 'k-layout-1'],
+  },
+  {
+    id: 'kmap-bad-group',
+    title: 'Illegal K-map groups',
+    signal: 'groups of 3 or 6 cells, diagonal groups, or groups mixing 1s and 0s.',
+    objective: 'K3',
+    lesson: 'karnaugh-maps',
+    wrong: 'Circling three 1s in a row, or two 1s that only touch at a corner.',
+    plausible: 'They are next to each other, so grouping them looks like it should save effort.',
+    problem: 'A group must be a rectangle of 1, 2, 4, 8 or 16 cells, all the same value, horizontal or vertical. Otherwise there is no single term that covers exactly those cells.',
+    correct: 'Use two overlapping pairs instead of a group of three. Overlaps are allowed (rule 6), diagonals are not (rule 7).',
+    exercises: ['k-rule-1', 'k-rule-2'],
+  },
+  {
+    id: 'latch-forbidden',
+    title: 'Using the forbidden latch input',
+    signal: 'treating S = R = 1 (NOR latch) or S = R = 0 (NAND latch) as a normal state.',
+    objective: 'L3',
+    lesson: 'storing-bits',
+    wrong: '"With S = 1 and R = 1 the NOR latch sets and resets at the same time, so Q toggles."',
+    plausible: 'Each input on its own has a clear meaning, so combining them seems allowed.',
+    problem: 'Both NOR gates are forced to 0, so Q and Q̄ are both 0 — they are no longer opposites. When the inputs return to 0 the result cannot be predicted. The notes mark this row "not defined".',
+    correct: 'Never apply S = R = 1 to a NOR latch (or S = R = 0 to a NAND latch). Use one active input at a time.',
+    exercises: ['l-forbid-1', 'l-nand-1'],
+  },
+];
+
+export const misconceptionById = (id: string) => MISCONCEPTIONS.find((m) => m.id === id);

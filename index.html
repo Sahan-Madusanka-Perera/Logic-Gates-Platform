@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Logic Gates Learning Lab</title>
+    <meta name="description" content="A free, interactive lab for learning logic gates for GCE A/L ICT: gates, truth tables, circuits, Boolean algebra, Karnaugh maps, adders, flip-flops and exam-style practice." />
+    <meta name="theme-color" content="#f4f2eb" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script>
+      // Apply the saved or system theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem('lgll.progress.v1') || '{}').settings || {};
+          var dark = s.theme === 'dark' || (s.theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Logic Gates Learning Lab needs JavaScript to run its simulators.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
