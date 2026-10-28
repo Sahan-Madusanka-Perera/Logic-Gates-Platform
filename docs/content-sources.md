@@ -26,7 +26,7 @@ not use them.
 
 ## Originality rules
 
-* All 148 practice questions, 8 build challenges, lesson text, worked examples and mistake examples
+* All 147 practice questions, 8 build challenges, lesson text, worked examples and mistake examples
   were written for this app. Each question shows an **"Original question"** label.
 * Where a question practises the same skill as a past-paper question, it says "Practises the same
   skill as 2014 MCQ 13", so learners can find the real question themselves. Only references

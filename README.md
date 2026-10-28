@@ -12,7 +12,7 @@ There's no account, no ads and no tracking. It works on phones and offline after
   counterexample, the notes' "peeling" method, step-by-step simplification where each step's law
   is checked); and a K-map lab
   with rule-by-rule grouping feedback.
-* **148 original practice questions** at six learning levels, with graduated hints, worked
+* **147 original practice questions** at six learning levels, with graduated hints, worked
   solutions and targeted practice for 15 common mistakes.
 * **Diagnostic quiz**, **timed practice papers** (navigator, flags, auto-submit, review) and a
   **progress page** that explains every level and recommendation.
@@ -50,7 +50,8 @@ The build is a static site in `dist/`, so any static host works. The app uses cl
 
 * **Netlify / Cloudflare Pages:** build command `npm run build`, publish directory `dist`.
   `public/_redirects` (copied into `dist/`) already contains the fallback rule.
-* **Vercel:** same build settings; add a rewrite of `/(.*)` to `/index.html`.
+* **Vercel:** same build settings. `vercel.json` already rewrites every path to `/index.html`, so
+  deep links such as `/lab/expression` load instead of returning 404.
 * **GitHub Pages or any sub-folder:** set the base path when building, and copy `index.html` to
   `404.html` so deep links work:
 
