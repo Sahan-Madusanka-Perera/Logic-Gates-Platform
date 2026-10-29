@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
+import { Analytics } from '@vercel/analytics/react';
 import { ErrorBoundary } from './ErrorBoundary';
 import { Layout } from './Layout';
 
@@ -36,6 +37,7 @@ export function App() {
           </Route>
         </Routes>
       </ErrorBoundary>
+      <Analytics />
     </BrowserRouter>
   );
 }
