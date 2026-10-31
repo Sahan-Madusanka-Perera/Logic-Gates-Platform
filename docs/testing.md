@@ -17,7 +17,7 @@ once.
 
 ## What is tested
 
-### Unit and integration (Vitest): 656 tests in 11 files
+### Unit and integration (Vitest): 685 tests in 12 files
 
 | File | Tests | Covers |
 |------|------:|--------|
@@ -26,6 +26,7 @@ once.
 | `tests/unit/circuit.test.ts` | 15 | Validation (missing inputs, cycles, unknown sources), evaluation order, truth tables, the notes' peeling example |
 | `tests/unit/kmap-sequential-switches.test.ts` | 22 | Gray code and cell numbering as in the notes, group rule checks (mixed values, sizes, diagonals, wrap-around), cover analysis, groups of 0s, NOR/NAND/OR-AND latches, switch circuits, NAND-only and NOR-only constructions |
 | `tests/unit/laws.test.ts` | 64 | Every law accepted in both directions and in several places at once (factorising, A = A.1, multiplying out); the lesson worked steps pass with the law they name; a jump straight to the answer is rejected whichever law is chosen; a wrong law is rejected and the right one named; two laws in one line rejected (De Morgan then double complement, complement then identity); property test that every single law application keeps the truth table |
+| `tests/unit/lawSolver.test.ts` | 29 | The solver's lines match a teacher's for textbook cases (factorise → complement → identity, the dual, redundancy, De Morgan then double bars, the consensus case via B.C = B.C.1 = B.C.(A + A')); every line of every solution passes `checkStep` with the law it names and keeps the truth table, for the lesson exercises, every "simplify fully" question, a case that needs the standard-form method (checked in full), and a property test on random expressions; already-simplest input, `nextStep`, `simplestForm`, the time limit |
 | `tests/unit/simplest.test.ts` | 12 | "Fully simplified" means the fewest variables **and** no law left to apply: B.1 → B (Identity law), A″, repeated and complementary operands, nested cases; property test that the engine's minimal SOP/POS never have a leftover step |
 | `tests/unit/builder.test.ts` | 13 | Every build challenge has a passing reference solution; wrong gates, wrong function (with counterexample), missing/extra terminals; editing model (add, wire, remove, change type, move, labels, corrupted saves) |
 | `tests/unit/progress.test.ts` | 9 | XP once per question, mastery levels match their written definitions, recommendations always give a reason, export/import/reset, corrupted storage |
@@ -33,7 +34,7 @@ once.
 | `tests/integration/lessons.test.ts` | 15 | One lesson per module, quiz ids exist, expressions parse, preset circuits evaluate, IC pinouts |
 | `tests/integration/assessment-flow.test.ts` | 11 | Practice session URLs and fallbacks, every mode/topic/level/mistake produces questions, grading without hints, diagnostic starting point, paper topic filters, "simplify fully" questions reject answers padded with a constant |
 
-### End to end (Playwright): 68 tests × 2 projects = 136 runs
+### End to end (Playwright): 70 tests × 2 projects = 140 runs
 
 Projects: **desktop** (Chrome, 1366×860) and **mobile** (Pixel 7). Every test fails if the page logs
 a console error or throws.
@@ -43,7 +44,7 @@ a console error or throws.
 | `smoke.spec.ts` | Every route and all 14 lessons render a heading without sideways scrolling; 404 page |
 | `learning.spec.ts` | Completing a lesson persists after refresh; practice hints → worked solution → summary; settings (theme, AND notation) persist; download, delete (in-page confirm, cancel and confirm), import |
 | `assessment.spec.ts` | Diagnostic without hints, marking and suggested lesson; exam navigator, flags, in-page confirm, review filters; **timer auto-submit** using Playwright's fake clock; resuming an unfinished paper after refresh |
-| `lab.spec.ts` | Builder challenge solved with the keyboard-accessible wiring panel; wiring by tapping pins; undo/redo; persistence; expression lab forms and equivalence counterexample; B.1 is finished with the Identity law, not called "already simplest"; in "simplify with laws", typing the answer in one jump or naming the wrong law is rejected (with the right law named) and one-law steps are accepted; K-map lab fill and reveal |
+| `lab.spec.ts` | Builder challenge solved with the keyboard-accessible wiring panel; wiring by tapping pins; undo/redo; persistence; expression lab forms and equivalence counterexample; B.1 is finished with the Identity law, not called "already simplest"; in "simplify with laws", typing the answer in one jump or naming the wrong law is rejected (with the right law named) and one-law steps are accepted; the solver's hint names the next law (and selects it), the next line can be shown and used, and a full solution from the current line is revealed a line at a time and can be added to the working; K-map lab fill and reveal |
 | `offline-a11y.spec.ts` | **Offline:** after the first visit, the service worker controls the page; with the network switched off (`context.setOffline(true)`), a lesson, the builder and the exam page all load. **Accessibility:** axe-core (WCAG 2.0/2.1 A and AA) finds no serious or critical violations on 19 pages (including the lessons with switch circuits, the law checker, adders, latches and IC pin-outs), in both light and dark themes |
 
 The suite was also run with `--repeat-each=2` to check for flaky tests.

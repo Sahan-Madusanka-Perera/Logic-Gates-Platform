@@ -108,6 +108,9 @@ export function canonical(e: Expr, flat = true): Expr {
   return out;
 }
 
+/** Lines with the same key differ only by the commutative and associative laws. */
+export const canonicalKey = (e: Expr): string => keyOf(canonical(e));
+
 const isNegationOf = (x: Expr, y: Expr) => (x.type === 'not' && keyOf(x.operand) === keyOf(y)) || (y.type === 'not' && keyOf(y.operand) === keyOf(x));
 
 const without = <T>(xs: T[], ...idx: number[]) => xs.filter((_, i) => !idx.includes(i));
