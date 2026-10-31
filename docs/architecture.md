@@ -31,6 +31,10 @@ src/
     minimize.ts       Prime implicants and minimum cover (Quine–McCluskey style), leftover-law check
     laws.ts           Law names and forms; checks that one simplification line follows from the
                       last by the law named (search over single-law rewrites, both directions)
+    lawSolver.ts      Solves a simplification one law per line, with a plain-words note and a hint
+                      for each line: a best-first search over single-law moves, then the
+                      standard-form method (expand to minterms, combine pairs) when that fails.
+                      Every line it shows is accepted by laws.ts
     kmap.ts           Gray-code layouts, group rule checks (notes' rules 1–9), cover analysis
     sequential.ts     NOR / NAND / OR-AND latches
     switches.ts       Switch-and-bulb circuits

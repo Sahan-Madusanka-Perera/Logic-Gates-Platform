@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures';
+import { expect, noHorizontalScroll, test } from './fixtures';
 
 test('builder: solve "NOT from NAND" with the keyboard-friendly wiring panel', async ({ page }) => {
   await page.goto('/lab/builder');
@@ -124,4 +124,49 @@ test('simplify with laws: the law named is checked, and a jump straight to the a
     await check.click();
   }
   await expect(page.getByText(/Fully simplified: 1 variable occurrence/)).toBeVisible();
+});
+
+test('simplify with laws: hint, next line and a full solution from the solver', async ({ page }) => {
+  await page.goto('/lab/expression');
+  await page.getByRole('textbox', { name: 'Expression' }).fill("A.B + A'.C + B.C");
+  await page.getByRole('button', { name: 'Simplify with laws' }).click();
+
+  // A hint names the law (and picks it in "Law used") without giving the line away.
+  await page.getByRole('button', { name: 'Hint' }).click();
+  const hint = page.getByRole('status', { name: 'Hint' });
+  await expect(hint).toContainText('Next, use the Identity law.');
+  await expect(page.getByLabel('Law used')).toHaveValue('Identity law');
+
+  // The next line can be shown, then used.
+  await hint.getByRole('button', { name: 'Show me the next line' }).click();
+  await expect(hint).toContainText('Multiply by 1, which changes nothing');
+  await hint.getByRole('button', { name: 'Use this line' }).click();
+  await expect(page.getByRole('list', { name: 'Your working' })).toContainText('shown by the solver');
+
+  // A full solution from the current line, one line at a time.
+  await page.getByRole('button', { name: 'Solve it step by step' }).click();
+  const solution = page.getByRole('region', { name: 'Solution' });
+  await expect(solution).toContainText('Solution from your line 2');
+  await expect(solution.getByText('(Complement law)')).toBeVisible();
+  await expect(solution.getByText('(Redundancy law)')).toHaveCount(0);
+  await solution.getByRole('button', { name: 'Show all lines' }).click();
+  await expect(solution.getByText('(Redundancy law)')).toBeVisible();
+  await expect(solution).toContainText('Answer:');
+  await solution.getByRole('button', { name: 'Add these lines to my working' }).click();
+  await expect(page.getByText(/Fully simplified: 4 variable occurrences/)).toBeVisible();
+  await noHorizontalScroll(page);
+});
+
+test('simplify with laws: the solver starts from the given line when nothing is typed', async ({ page }) => {
+  await page.goto('/lab/expression');
+  await page.getByRole('textbox', { name: 'Expression' }).fill("A.B + A.B'");
+  await page.getByRole('button', { name: 'Simplify with laws' }).click();
+  await page.getByRole('button', { name: 'Solve it step by step' }).click();
+  const solution = page.getByRole('region', { name: 'Solution' });
+  await expect(solution).toContainText('Solution from the given expression · 3 lines, one law each');
+  await solution.getByRole('button', { name: 'Show the next line' }).click();
+  await solution.getByRole('button', { name: 'Show the next line' }).click();
+  await expect(solution).toContainText('Answer:');
+  await solution.getByRole('button', { name: 'Hide solution' }).click();
+  await expect(solution).toHaveCount(0);
 });
